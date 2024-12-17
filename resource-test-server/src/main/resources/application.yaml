@@ -1,0 +1,11 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: resource-test-server
+  security:
+    oauth2:
+      resourceserver: # oAuth2 ????? ? ??? ??? ??
+        jwt:
+          issuer-uri: http://auth-server:9000 # oAuth2 Server's Token Check

@@ -1,0 +1,39 @@
+server:
+  port: 9000
+
+spring:
+  resources:
+    cache:
+      period: 0
+
+  application:
+    name: auth-test-srv
+  security:
+    oauth2:
+      authorization-server:
+        client:
+          sesac-lms:
+            registration:
+              client-id: sesac-lms
+              client-secret: secret
+              client-name: Articles Client
+              client-authentication-methods:
+                - client_secret_post
+              authorization-grant-types:
+                - authorization_code
+                - refresh_token
+                - password
+              redirect-uris: http://sesac-lms.click/auth/callback
+              scopes:
+                - openid
+                - articles.read
+        issuer: http://auth.sesac-lms.click
+        endpoint:
+          token-uri: /oauth2/token
+          authorization-uri: /oauth2/authorize
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
+        web: TRACE
