@@ -4,10 +4,10 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const authConfig = {
-    tokenUrl: 'http://auth.sesac-lms.click/oauth2/token', // 토큰 요청 URL
-    clientId: 'spring', // 클라이언트 ID
-    clientSecret: 'secret', // 클라이언트 시크릿
-    redirectUri: 'http://sesac-lms.click/oauth2/redirect', // 리다이렉션 URI (프론트엔드 URI에 맞게 설정)
+    tokenUrl: 'http://auth.sesac-univ.click/oauth2/token', // 토큰 요청 URL
+    clientId: 'sesac-univ', // 클라이언트 ID
+    clientSecret: '111', // 클라이언트 시크릿
+    redirectUri: 'http://sesac-univ.click/oauth2/redirect', // 리다이렉션 URI (프론트엔드 URI에 맞게 설정)
 };
 
 const Redirect = () => {

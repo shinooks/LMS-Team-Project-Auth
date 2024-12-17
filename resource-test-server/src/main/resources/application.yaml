@@ -1,5 +1,5 @@
 server:
-  port: 8090
+  port: 8080
 
 spring:
   application:
@@ -8,4 +8,4 @@ spring:
     oauth2:
       resourceserver: # oAuth2 ????? ? ??? ??? ??
         jwt:
-          issuer-uri: http://auth-server:9000 # oAuth2 Server's Token Check
+          issuer-uri: http://auth.sesac-univ.click

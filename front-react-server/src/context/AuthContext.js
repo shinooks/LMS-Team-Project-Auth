@@ -1,34 +1,78 @@
-// src/context/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
+import { useNavigate } from 'react-router-dom';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [accessToken, setAccessToken] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // 앱이 로드될 때 로컬 스토리지에서 사용자 정보와 토큰을 불러옴
-    const storedUser = localStorage.getItem('user');
     const token = localStorage.getItem('access_token');
-    if (storedUser && token) {
-      setUser(JSON.parse(storedUser));
-      setAccessToken(token);
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        setAccessToken(token);
+
+        const roles = decodedToken.roles || [];
+        const primaryRole = roles.includes('ROLE_학생') ? 'student' :
+            roles.includes('ROLE_교수') ? 'professor' :
+                roles.includes('ROLE_교직원') ? 'admin' : null;
+
+        if (!primaryRole) {
+          throw new Error('유효하지 않은 역할');
+        }
+
+        setUser({
+          id: decodedToken.sub,
+          name: '사용자 이름 미상', // 임의 값
+          email: 'unknown@example.com', // 임의 값
+          role: primaryRole,
+          department: roles.find(role => role.startsWith('ROLE_') && role !== 'ROLE_사용자')?.split('_')[1] || 'Unknown',
+        });
+      } catch (error) {
+        console.error('Invalid token:', error);
+        logout();
+      }
     }
   }, []);
 
-  const login = (userData, token) => {
-    setUser(userData);
-    setAccessToken(token);
-    localStorage.setItem('user', JSON.stringify(userData));
-    localStorage.setItem('access_token', token);
+  const login = (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      setAccessToken(token);
+
+      const roles = decodedToken.roles || [];
+      const primaryRole = roles.includes('ROLE_학생') ? 'student' :
+          roles.includes('ROLE_교수') ? 'professor' :
+              roles.includes('ROLE_교직원') ? 'admin' : null;
+
+      if (!primaryRole) {
+        throw new Error('유효하지 않은 역할');
+      }
+
+      setUser({
+        id: decodedToken.sub,
+        name: '사용자 이름 미상', // 임의 값
+        email: 'unknown@example.com', // 임의 값
+        role: primaryRole,
+        department: roles.find(role => role.startsWith('ROLE_') && role !== 'ROLE_사용자')?.split('_')[1] || 'Unknown',
+      });
+
+      localStorage.setItem('access_token', token);
+    } catch (error) {
+      console.error('Invalid token during login:', error);
+      logout();
+    }
   };
 
   const logout = () => {
     setUser(null);
     setAccessToken(null);
-    localStorage.removeItem('user');
     localStorage.removeItem('access_token');
+    navigate('/auth/login');
   };
 
   return (

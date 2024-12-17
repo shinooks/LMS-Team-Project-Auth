@@ -1,0 +1,117 @@
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const styles = {
+    container: {
+        fontFamily: 'Arial, sans-serif',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        color: '#fff',
+        backgroundImage: 'url(/path-to-your-image.jpg)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: '100vh',
+        width: '100%',
+        textAlign: 'center',
+    },
+    header: {
+        backgroundColor: '#0056b3',
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '10px 20px',
+        justifyContent: 'space-between',
+        color: '#fff',
+    },
+    logo: {
+        display: 'flex',
+        alignItems: 'center',
+    },
+    logoImage: {
+        height: '40px',
+        marginRight: '10px',
+    },
+    headerText: {
+        fontSize: '18px',
+        fontWeight: 'bold',
+    },
+    navLinks: {
+        display: 'flex',
+        gap: '15px',
+    },
+    buttonSection: {
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        padding: '20px',
+        borderRadius: '10px',
+        marginTop: '20vh',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+        alignItems: 'center',
+    },
+    button: {
+        backgroundColor: '#0056b3',
+        color: '#fff',
+        padding: '15px 30px',
+        borderRadius: '5px',
+        fontSize: '18px',
+        border: 'none',
+        cursor: 'pointer',
+    },
+    footer: {
+        position: 'absolute',
+        bottom: '20px',
+        display: 'flex',
+        gap: '10px',
+    },
+    footerButton: {
+        backgroundColor: '#0056b3',
+        color: '#fff',
+        padding: '10px 15px',
+        borderRadius: '5px',
+        fontSize: '14px',
+        border: 'none',
+        cursor: 'pointer',
+    },
+};
+
+function Home() {
+    const navigate = useNavigate();
+
+    const handleLMSClick = () => {
+        navigate('/auth/login'); // Navigates to the Login page when clicked
+    };
+
+    return (
+        <div style={styles.container}>
+            <div style={styles.buttonSection}>
+                <button style={styles.button} onClick={handleLMSClick}>LMS 바로가기</button>
+            </div>
+        </div>
+    );
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const user = await login(email, password);
+            // 역할에 따른 리다이렉트
+            switch (user.role) {
+                case 'student':
+                    navigate('/student/dashboard');
+                    break;
+                case 'professor':
+                    navigate('/professor/dashboard');
+                    break;
+                case 'admin':
+                    navigate('/admin/dashboard');
+                    break;
+                default:
+                    setError('유효하지 않은 사용자 역할입니다.');
+            }
+        } catch (error) {
+            setError('로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.');
+        }
+    };
+}
+
+export default Home;

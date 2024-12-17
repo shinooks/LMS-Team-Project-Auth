@@ -12,6 +12,7 @@ const RoleBasedRoute = ({ children, allowedRoles }) => {
 
   if (!allowedRoles.includes(user.role)) {
     // 역할이 허용되지 않은 경우 기본 경로로 리다이렉트
+    console.log(user)
     return <Navigate to="/auth/home" replace />;
   }
 

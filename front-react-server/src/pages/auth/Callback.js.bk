@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {jwtDecode} from 'jwt-decode'; // JWT 디코딩 라이브러리
-import { useAuth } from '../../context/AuthContext'; // AuthContext 가져오기
 
 const authConfig = {
     tokenUrl: 'http://auth.sesac-univ.click/oauth2/token',
@@ -12,7 +11,6 @@ const authConfig = {
 
 const Callback = () => {
     const navigate = useNavigate();
-    const { login } = useAuth(); // AuthContext의 login 메서드
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -45,30 +43,35 @@ const Callback = () => {
             const data = await response.json();
 
             if (data.access_token) {
-                // JWT 디코딩
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
+
                 const decodedToken = jwtDecode(data.access_token);
-
-                // AuthContext의 login 메서드 호출
-                login(data.access_token);
-
-                // 역할에 따른 리다이렉션
                 const roles = decodedToken.roles || [];
-                if (roles.includes('ROLE_학생')) {
-                    navigate('/student/dashboard');
-                } else if (roles.includes('ROLE_교수')) {
-                    navigate('/professor/dashboard');
-                } else if (roles.includes('ROLE_교직원')) {
-                    navigate('/admin/dashboard');
-                } else {
-                    setError('유효하지 않은 사용자 역할입니다.');
-                }
+                const userId = decodedToken.sub;
+
+                // 역할(Role) 및 부서 정보 구성
+                const primaryRole = roles.includes('ROLE_학생') ? 'student' :
+                    roles.includes('ROLE_교수') ? 'professor' :
+                        roles.includes('ROLE_관리자') ? 'admin' : 'user';
+                const department = roles.find(role => role.startsWith('ROLE_') && role !== 'ROLE_사용자')?.split('_')[1] || 'Unknown';
+
+                // 사용자 데이터 저장
+                const userData = {
+                    id: userId,
+                    name: '사용자 이름 미상', // 이름 정보를 추가로 가져오지 않는 경우 기본값 설정
+                    role: primaryRole,
+                    department: department,
+                };
+
+                localStorage.setItem('user', JSON.stringify(userData));
+
+                navigate(`/${primaryRole}/dashboard`); // 역할에 따라 대시보드로 이동
             } else {
                 setError('Failed to retrieve access token. Please try logging in again.');
-                console.error('Failed to retrieve access token:', data);
             }
         } catch (error) {
             setError('Error fetching access token. Please try logging in again.');
-            console.error('Error fetching access token:', error);
         }
     };
 

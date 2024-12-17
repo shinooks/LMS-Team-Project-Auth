@@ -38,16 +38,18 @@ const App = () => {
   return (
     <Routes>
       {/* Public Routes */}
-        <Route path="/auth/login" element={<Login />} />
-        <Route path="/auth/callback" element={<Callback />} />
-        <Route path="/auth/home" element={<Home />} />
-
+      <Route path="/auth">
+          <Route path="home" element={<Home/>}/>
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+          <Route path="callback" element={<Callback />} />
+      </Route>
 
         {/* Student Routes */}
         <Route
             path="/student"
             element={
-                <RoleBasedRoute allowedRoles={['student']}>
+                <RoleBasedRoute allowedRoles={['Role_student']}>
                     <Layout />
                 </RoleBasedRoute>
             }
@@ -67,7 +69,7 @@ const App = () => {
         <Route
             path="/professor"
             element={
-                <RoleBasedRoute allowedRoles={['professor']}>
+                <RoleBasedRoute allowedRoles={['Role_professor']}>
                     <Layout />
                 </RoleBasedRoute>
             }
@@ -85,7 +87,7 @@ const App = () => {
         <Route
             path="/admin"
             element={
-                <RoleBasedRoute allowedRoles={['admin']}>
+                <RoleBasedRoute allowedRoles={['Role_admin']}>
                     <Layout />
                 </RoleBasedRoute>
             }
